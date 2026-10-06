@@ -75,5 +75,9 @@ dependencies {
     implementation(libs.androidx.hilt.work)
     ksp(libs.androidx.hilt.compiler)
 
+    // Imágenes: Coil las baja y las pinta, con el mismo cliente que todo lo demás
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
+
     debugImplementation(libs.androidx.ui.tooling)
 }

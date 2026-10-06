@@ -1,5 +1,9 @@
 package mx.tec.avisos.ui.components
 
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.layout.ContentScale
+import coil3.compose.AsyncImage
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,6 +47,7 @@ fun TarjetaAviso(
         autor = aviso.autor,
         cuando = tiempoRelativo(aviso.creadoEn, ahora),
         nuevo = esReciente(aviso.creadoEn, ahora),
+        imagen = aviso.imagenUrl,
         modifier = modifier
     )
 }
@@ -54,7 +59,8 @@ fun TarjetaAviso(
     autor: String,
     cuando: String,
     nuevo: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    imagen: Any? = null
 ) {
     val espaciado = AvisosTema.espaciado
 
@@ -63,6 +69,19 @@ fun TarjetaAviso(
         shape = MaterialTheme.shapes.extraLarge,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
     ) {
+        if (imagen != null) {
+            // Siempre 16:9, haya llegado la imagen o no: la lista no brinca cuando termina de bajar.
+            AsyncImage(
+                model = imagen,
+                contentDescription = "Imagen del aviso",
+                contentScale = ContentScale.Crop,
+                placeholder = ColorPainter(MaterialTheme.colorScheme.surfaceContainerHighest),
+                error = ColorPainter(MaterialTheme.colorScheme.surfaceContainerHighest),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(16f / 9f)
+            )
+        }
         Column(
             modifier = Modifier.padding(espaciado.xl),
             verticalArrangement = Arrangement.spacedBy(espaciado.sm)
