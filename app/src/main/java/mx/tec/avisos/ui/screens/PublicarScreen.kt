@@ -1,5 +1,15 @@
 package mx.tec.avisos.ui.screens
 
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import mx.tec.avisos.R
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,6 +51,8 @@ fun PublicarScreen(
     autor: String,
     onTituloChange: (String) -> Unit,
     onCuerpoChange: (String) -> Unit,
+    onGaleria: () -> Unit,
+    onQuitarImagen: () -> Unit,
     onPublicar: () -> Unit,
     onCancelar: () -> Unit,
     modifier: Modifier = Modifier
@@ -62,7 +74,7 @@ fun PublicarScreen(
         // La acción principal abajo, y sube con el teclado: nunca queda tapada.
         bottomBar = {
             BotonPrincipal(
-                texto = if (uiState.enviando) "Publicando…" else "Publicar",
+                texto = uiState.etapa ?: "Publicar",
                 onClick = onPublicar,
                 habilitado = uiState.puedePublicar,
                 cargando = uiState.enviando,
@@ -96,6 +108,21 @@ fun PublicarScreen(
                 lineasMinimas = 4
             )
 
+            // La imagen es opcional: una forma de conseguirla, y una de quitarla.
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(espaciado.sm)
+            ) {
+                OutlinedButton(onClick = onGaleria, enabled = !uiState.enviando) {
+                    Icon(painterResource(R.drawable.ic_galeria), contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(espaciado.sm))
+                    Text("Galería")
+                }
+                if (uiState.imagen != null) {
+                    TextButton(onClick = onQuitarImagen, enabled = !uiState.enviando) { Text("Quitar") }
+                }
+            }
+
             // El error del servidor: un 403, un 422 que la validación no atrapó,
             // o una caída de red. La pantalla NO se cierra.
             val error = uiState.error
@@ -113,7 +140,9 @@ fun PublicarScreen(
                 cuerpo = uiState.cuerpo.ifBlank { "Así se va a ver tu aviso en el tablón." },
                 autor = autor,
                 cuando = "ahora",
-                nuevo = true
+                nuevo = true,
+                // La foto local, antes de subirla: la misma tarjeta, con una Uri en vez de una URL.
+                imagen = uiState.imagen
             )
         }
     }
@@ -129,7 +158,7 @@ private fun PublicarPreview() {
                 cuerpo = "El parcial es el jueves a las 10:00 en el salón de siempre. Traigan lápiz."
             ),
             autor = "profe.prueba",
-            onTituloChange = {}, onCuerpoChange = {}, onPublicar = {}, onCancelar = {}
+            onTituloChange = {}, onCuerpoChange = {}, onGaleria = {}, onQuitarImagen = {}, onPublicar = {}, onCancelar = {}
         )
     }
 }

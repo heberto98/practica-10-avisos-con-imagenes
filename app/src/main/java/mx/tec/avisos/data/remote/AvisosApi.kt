@@ -1,5 +1,8 @@
 package mx.tec.avisos.data.remote
 
+import okhttp3.MultipartBody
+import retrofit2.http.Multipart
+import retrofit2.http.Part
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -36,4 +39,9 @@ interface AvisosApi {
 
     @DELETE("avisos/{id}")
     suspend fun borrarAviso(@Path("id") id: Int): Response<Unit>
+
+    /** Multipart: el archivo viaja como una "parte" del cuerpo, como en un formulario web con `<input type="file">`. */
+    @Multipart
+    @POST("imagenes")
+    suspend fun subirImagen(@Part archivo: MultipartBody.Part): ImagenDto
 }
